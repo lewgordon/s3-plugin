@@ -134,6 +134,7 @@ public class S3Profile {
                                     final boolean uploadFromSlave,
                                     final boolean managedArtifacts,
                                     final boolean useServerSideEncryption,
+                                    final String cannedACL,
                                     final boolean gzipFiles) throws IOException, InterruptedException {
         final List<FingerprintRecord> fingerprints = new ArrayList<>(fileNames.size());
 
@@ -155,10 +156,10 @@ public class S3Profile {
                 final MasterSlaveCallable<String> upload;
                 if (gzipFiles) {
                     upload = new S3GzipCallable(accessKey, secretKey, useRole, assumeRole, dest,
-                        userMetadata, storageClass, selregion, useServerSideEncryption, getProxy());
+                        userMetadata, storageClass, selregion, useServerSideEncryption, cannedACL, getProxy());
                 } else {
                     upload = new S3UploadCallable(accessKey, secretKey, useRole, assumeRole, dest, userMetadata,
-                            storageClass, selregion, useServerSideEncryption, getProxy());
+                            storageClass, selregion, useServerSideEncryption, cannedACL, getProxy());
                 }
 
                 final FingerprintRecord fingerprintRecord = repeat(maxUploadRetries, uploadRetryTime, dest, new Callable<FingerprintRecord>() {
